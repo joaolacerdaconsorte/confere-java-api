@@ -3,11 +3,17 @@ package br.com.confere.controller;
 import br.com.confere.domain.enums.ModoVerificacao;
 import br.com.confere.domain.enums.Veredito;
 import br.com.confere.dto.*;
+import br.com.confere.exception.ConfereException;
 import br.com.confere.security.UsuarioPrincipal;
 import br.com.confere.service.VerificacaoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +23,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/verificacoes")
 @RequiredArgsConstructor
@@ -25,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class VerificacaoController {
 
     private final VerificacaoService verificacaoService;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Enviar texto ou link para verificação (JSON)")
@@ -38,13 +48,14 @@ public class VerificacaoController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Enviar print/foto com metadados para verificação (multipart)")
+    @Operation(summary = "Enviar print/foto com metadados para verificação (multipart)",
+            description = "A parte 'dados' recebe o JSON da verificação, por exemplo {\"tipoEntrada\":\"IMAGEM\",\"canal\":\"WHATSAPP\",\"modo\":\"ONLINE\"}, e a parte 'imagem' recebe o print ou a foto.")
     public ResponseEntity<VerificacaoResponse> criarMultipart(
             @AuthenticationPrincipal UsuarioPrincipal principal,
-            @Valid @RequestPart("dados") CriarVerificacaoRequest dados,
+            @RequestPart("dados") String dados,
             @RequestPart(value = "imagem", required = false) MultipartFile imagem
     ) {
-        VerificacaoResponse response = verificacaoService.criar(principal.getId(), dados, imagem);
+        VerificacaoResponse response = verificacaoService.criar(principal.getId(), lerDados(dados), imagem);
         HttpStatus status = response.modo() == ModoVerificacao.OFFLINE ? HttpStatus.ACCEPTED : HttpStatus.CREATED;
         return ResponseEntity.status(status).body(response);
     }
@@ -87,5 +98,20 @@ public class VerificacaoController {
             @Valid @RequestBody FeedbackRequest request
     ) {
         return ResponseEntity.ok(verificacaoService.salvarFeedback(principal.getId(), id, request));
+    }
+
+    private CriarVerificacaoRequest lerDados(String dados) {
+        CriarVerificacaoRequest request;
+        try {
+            request = objectMapper.readValue(dados, CriarVerificacaoRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new ConfereException(HttpStatus.BAD_REQUEST, "VALIDACAO",
+                    "A parte 'dados' deve ser um JSON válido com tipoEntrada, conteudo, canal e modo.");
+        }
+        Set<ConstraintViolation<CriarVerificacaoRequest>> violacoes = validator.validate(request);
+        if (!violacoes.isEmpty()) {
+            throw new ConstraintViolationException(violacoes);
+        }
+        return request;
     }
 }

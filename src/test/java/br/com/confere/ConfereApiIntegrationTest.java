@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -239,5 +242,55 @@ class ConfereApiIntegrationTest {
         mockMvc.perform(delete("/api/admin/tipos-golpe/" + id)
                         .header("Authorization", "Bearer " + tokenAdmin))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void errosDeParametroERotaInexistenteDevemSeguirProblemDetail() throws Exception {
+        String tokenCida = loginAndGetToken("cida@confere.app", "Senha@123");
+
+        mockMvc.perform(get("/api/verificacoes")
+                        .param("veredito", "NAO_EXISTE")
+                        .header("Authorization", "Bearer " + tokenCida))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACAO"))
+                .andExpect(jsonPath("$.erros[0].campo").value("veredito"));
+
+        mockMvc.perform(get("/api/verificacoes/abc")
+                        .header("Authorization", "Bearer " + tokenCida))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACAO"));
+
+        mockMvc.perform(get("/api/rota-que-nao-existe")
+                        .header("Authorization", "Bearer " + tokenCida))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("NAO_ENCONTRADO"));
+    }
+
+    @Test
+    void verificacaoMultipartDeveAceitarDadosComoTextoEValidarCampos() throws Exception {
+        String tokenCida = loginAndGetToken("cida@confere.app", "Senha@123");
+
+        MockMultipartFile dadosValidos = new MockMultipartFile("dados", "", "text/plain",
+                """
+                { "tipoEntrada": "TEXTO", "conteudo": "Seu cartão foi bloqueado, informe a senha urgente para liberar.", "canal": "SMS", "modo": "ONLINE" }
+                """.getBytes(StandardCharsets.UTF_8));
+
+        mockMvc.perform(multipart("/api/verificacoes")
+                        .file(dadosValidos)
+                        .header("Authorization", "Bearer " + tokenCida))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PROCESSADA"));
+
+        MockMultipartFile dadosSemTipo = new MockMultipartFile("dados", "", "application/json",
+                """
+                { "conteudo": "Mensagem sem o tipo de entrada informado." }
+                """.getBytes(StandardCharsets.UTF_8));
+
+        mockMvc.perform(multipart("/api/verificacoes")
+                        .file(dadosSemTipo)
+                        .header("Authorization", "Bearer " + tokenCida))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACAO"))
+                .andExpect(jsonPath("$.erros[0].campo").value("tipoEntrada"));
     }
 }
