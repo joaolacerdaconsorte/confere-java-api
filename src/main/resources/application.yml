@@ -58,6 +58,9 @@ confere:
   ia:
     base-url: ${IA_BASE_URL:http://localhost:8000}
     api-key: ${IA_API_KEY:dev-ia-key}
+    timeout-seconds: ${IA_TIMEOUT_SECONDS:20}
+  ocr:
+    timeout-seconds: ${OCR_TIMEOUT_SECONDS:20}
   rabbitmq:
     exchange: confere.verificacoes
     queue-risco: confere.verificacao.risco
