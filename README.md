@@ -172,6 +172,8 @@ O Gemini é usado pela camada compatível com a API da OpenAI, então o código 
 | `RABBITMQ_HOST` · `RABBITMQ_PORT` · `RABBITMQ_USER` · `RABBITMQ_PASSWORD` · `RABBITMQ_VHOST` · `RABBITMQ_SSL` | Broker RabbitMQ | `localhost` · `5672` · `guest` · `guest` · `/` · `false` |
 | `RABBITMQ_AUTO_STARTUP` | Liga os consumidores das filas | `false` |
 | `IA_BASE_URL` · `IA_API_KEY` | Serviço de IA em Python | `http://localhost:8000` |
+| `IA_TIMEOUT_SECONDS` | Tempo máximo de espera pelo serviço de IA em Python | `20` |
+| `OCR_TIMEOUT_SECONDS` | Tempo máximo da leitura de imagem pelo Gemini (usada quando o serviço Python não lê a imagem) | `20` |
 | `LLM_API_KEY` · `LLM_MODEL` · `LLM_BASE_URL` · `LLM_COMPLETIONS_PATH` | Spring AI (OpenAI ou Gemini) | desligado |
 | `LLM_TIMEOUT` | Tempo máximo de espera pelo LLM (depois disso usa a resposta padrão) | `25s` |
 | `H2_CONSOLE_ENABLED` | Console do H2. **Use `false` em qualquer ambiente público** | `true` |
