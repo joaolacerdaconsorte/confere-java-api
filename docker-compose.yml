@@ -39,10 +39,17 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
       JWT_SECRET: ${JWT_SECRET:-confere-dev-secret-key-com-no-minimo-32-bytes-seguros}
+      DB_URL: ${DB_URL:-jdbc:oracle:thin:@//oracle-xe:1521/XEPDB1}
+      DB_USER: ${DB_USER:-confere}
+      DB_PASSWORD: ${DB_PASSWORD:-Confere123}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_AUTO_STARTUP: "true"
       IA_BASE_URL: ${IA_BASE_URL:-http://host.docker.internal:8000}
       IA_API_KEY: ${IA_API_KEY:-dev-ia-key}
-      LLM_API_KEY: ${LLM_API_KEY:-dev-llm-key}
+      LLM_API_KEY: ${LLM_API_KEY:-disabled}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com}
+      LLM_COMPLETIONS_PATH: ${LLM_COMPLETIONS_PATH:-/v1/chat/completions}

@@ -14,10 +14,22 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 6MB
+  http:
+    client:
+      connect-timeout: 5s
+      read-timeout: ${LLM_TIMEOUT:25s}
   ai:
+    retry:
+      max-attempts: 2
+      backoff:
+        initial-interval: 1s
+        multiplier: 2
+        max-interval: 2s
     openai:
       api-key: ${LLM_API_KEY:disabled}
+      base-url: ${LLM_BASE_URL:https://api.openai.com}
       chat:
+        completions-path: ${LLM_COMPLETIONS_PATH:/v1/chat/completions}
         options:
           model: ${LLM_MODEL:gpt-4o-mini}
           temperature: 0.2
@@ -39,7 +51,7 @@ springdoc:
 
 confere:
   jwt:
-    secret: ${JWT_SECRET:confere-dev-secret-key-com-no-minimo-32-bytes-seguros}
+    secret: ${JWT_SECRET}
     issuer: confere-java
     audience: confere-app
     expiration-seconds: 28800
