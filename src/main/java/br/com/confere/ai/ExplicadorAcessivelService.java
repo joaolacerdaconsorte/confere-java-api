@@ -9,15 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Serviço Spring AI que traduz a análise técnica do motor de IA em linguagem simples
- * para idosos e pessoas com baixo letramento digital (RN05).
- */
 @Slf4j
 @Service
 public class ExplicadorAcessivelService {
+
+    private static final long TIMEOUT_SEGUNDOS = 20;
 
     private final ChatClient chatClient;
     private final String llmApiKey;
@@ -44,7 +43,7 @@ public class ExplicadorAcessivelService {
                         ? analise.fontes().get(0).titulo()
                         : "Canal oficial gov.br / 135";
 
-                ExplicacaoAcessivel resultado = chatClient.prompt()
+                ExplicacaoAcessivel resultado = CompletableFuture.supplyAsync(() -> chatClient.prompt()
                         .system("""
                                 Você é o explicador acessível do aplicativo Confere para idosos e pessoas com baixo letramento digital.
                                 Regras obrigatórias (RN05):
@@ -72,13 +71,16 @@ public class ExplicadorAcessivelService {
                                 .param("justificativa", analise.justificativa() != null ? analise.justificativa() : "")
                                 .param("nome", nomeUsuario))
                         .call()
-                        .entity(ExplicacaoAcessivel.class);
+                        .entity(ExplicacaoAcessivel.class))
+                        .get(TIMEOUT_SEGUNDOS, TimeUnit.SECONDS);
 
                 if (resultado != null && resultado.frases() != null && !resultado.frases().isEmpty()) {
                     return sanitizarRn05(resultado, veredito);
                 }
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             } catch (Exception ex) {
-                log.warn("Falha ao chamar LLM via Spring AI ({}); usando resposta degradada padrão.", ex.getMessage());
+                log.warn("Falha ao chamar LLM via Spring AI ({}); usando resposta degradada padrão.", ex.toString());
             }
         }
         return respostaPadrao(veredito, analise, nomeUsuario);
