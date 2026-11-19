@@ -1,0 +1,45 @@
+===============================================================================
+FIAP — GLOBAL SOLUTION 2026/2 | CITIZENTECH — JAVA ADVANCED
+PROJETO: CONFERE ("Antes de clicar, pagar ou desistir de um direito: confere.")
+TURMA: 2TDSPW | PROFESSOR: LEONARDO REAL (lgsreal)
+===============================================================================
+
+1. INTEGRANTES DO GRUPO (2TDSPW)
+-------------------------------------------------------------------------------
+- João Vitor Lacerda Consorte  — RM 565565 — Turma 2TDSPW
+- Kauan Vieira de Lima         — RM 565403 — Turma 2TDSPW
+- Murillo Fernandes Carapia    — RM 564969 — Turma 2TDSPW
+- Pedro de Matos Previtali     — RM 564184 — Turma 2TDSPW
+
+2. LINKS DA ENTREGA
+-------------------------------------------------------------------------------
+- Repositório Público no GitHub (confere-java-api):
+  https://github.com/joaolacerdaconsorte/confere-java-api
+- Vídeo Pitch (até 5 minutos):
+  [INSERIR LINK DO YOUTUBE NÃO LISTADO / DRIVE PÚBLICO ANTES DO ENVIO NO PORTAL]
+
+3. ARQUITETURA DISTRIBUÍDA (REQUISITO 5)
+-------------------------------------------------------------------------------
+- Opção escolhida: Opção A — RabbitMQ
+  - Exchange (Topic): confere.verificacoes
+  - Filas: confere.verificacao.risco (+ .dlq) e confere.verificacao.offline (+ .dlq)
+  - Publicação: @TransactionalEventListener(phase = AFTER_COMMIT)
+
+4. CREDENCIAIS DE TESTE (SEED AUTOMÁTICO)
+-------------------------------------------------------------------------------
+- Cidadã (com vínculo ativo e consentimentos): cida@confere.app / Senha@123
+- Guardião (protege Maria Aparecida):          joao@confere.app / Senha@123
+- Administrador (CRUD catálogos /admin):       admin@confere.app / Senha@123
+
+5. COMO RODAR LOCALMENTE
+-------------------------------------------------------------------------------
+Pré-requisito: Java 21 LTS
+Comando:
+  .\mvnw.cmd spring-boot:run
+Swagger UI:
+  http://localhost:8080/swagger-ui.html
+Health Check:
+  http://localhost:8080/actuator/health
+Testes Automatizados:
+  .\mvnw.cmd test
+===============================================================================

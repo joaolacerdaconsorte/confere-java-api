@@ -1,0 +1,48 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: confere-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  oracle-xe:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: confere-oracle
+    profiles: ["oracle"]
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ${DB_PASSWORD:-Confere123}
+      APP_USER: ${DB_USER:-confere}
+      APP_USER_PASSWORD: ${DB_PASSWORD:-Confere123}
+    volumes:
+      - ./scripts/schema-oracle.sql:/container-entrypoint-initdb.d/01_schema.sql:ro
+      - ./scripts/seed-oracle.sql:/container-entrypoint-initdb.d/02_seed.sql:ro
+
+  confere-java-api:
+    build: .
+    container_name: confere-java-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      JWT_SECRET: ${JWT_SECRET:-confere-dev-secret-key-com-no-minimo-32-bytes-seguros}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      IA_BASE_URL: ${IA_BASE_URL:-http://host.docker.internal:8000}
+      IA_API_KEY: ${IA_API_KEY:-dev-ia-key}
+      LLM_API_KEY: ${LLM_API_KEY:-dev-llm-key}

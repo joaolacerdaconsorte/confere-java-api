@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: confere-java-api
+  profiles:
+    default: dev
+  jackson:
+    time-zone: America/Sao_Paulo
+    serialization:
+      write-dates-as-timestamps: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  ai:
+    openai:
+      api-key: ${LLM_API_KEY:disabled}
+      chat:
+        options:
+          model: ${LLM_MODEL:gpt-4o-mini}
+          temperature: 0.2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+confere:
+  jwt:
+    secret: ${JWT_SECRET:confere-dev-secret-key-com-no-minimo-32-bytes-seguros}
+    issuer: confere-java
+    audience: confere-app
+    expiration-seconds: 28800
+  ia:
+    base-url: ${IA_BASE_URL:http://localhost:8000}
+    api-key: ${IA_API_KEY:dev-ia-key}
+  rabbitmq:
+    exchange: confere.verificacoes
+    queue-risco: confere.verificacao.risco
+    routing-key-risco: verificacao.risco
+    queue-offline: confere.verificacao.offline
+    routing-key-offline: verificacao.offline
