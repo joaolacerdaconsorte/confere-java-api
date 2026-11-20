@@ -16,15 +16,15 @@ API publicada na Azure (integrada ao app Mobile e à API .NET):
 Swagger UI:   https://confere-java-rm564969.azurewebsites.net/swagger-ui.html
 Health check: https://confere-java-rm564969.azurewebsites.net/actuator/health
 
-Demonstração em vídeo (app Mobile consumindo a API Java ponta a ponta):
+Vídeo da demonstração integrada (app Mobile consumindo esta API Java):
 https://youtu.be/lqc-IkzOcis
 
 Observação sobre o vídeo pitch:
-Por conflito de horários na reta final das entregas, não conseguimos gravar o
-vídeo pitch separado de 5 minutos. Deixamos o roteiro completo em
-docs/roteiro-pitch.md, o vídeo acima mostrando a API Java integrada ao app
-Mobile funcionando ponta a ponta, o deploy ativo na Azure, o script
-scripts/testar-api.ps1 e 19 testes automatizados passando no CI.
+Professor, não conseguimos gravar o vídeo pitch separado de 5 minutos a tempo
+da entrega por choque de horários do grupo na reta final. Deixamos a API Java
+publicada e funcionando na Azure, o link acima do app Mobile consumindo a API
+Java ponta a ponta, 19 testes automatizados passando no CI e o script
+scripts/testar-api.ps1 validando todos os endpoints.
 
 Arquitetura distribuída (Requisito 5):
 Opção A - RabbitMQ

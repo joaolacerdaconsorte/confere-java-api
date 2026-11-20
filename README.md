@@ -196,14 +196,14 @@ Os erros seguem o padrão **ProblemDetail (RFC 7807)** com `codigo` e `erros`, c
 
 Códigos usados: `VALIDACAO` (400), `NAO_AUTENTICADO` (401), `SEM_PERMISSAO` / `CONSENTIMENTO_PENDENTE` (403), `NAO_ENCONTRADO` (404), `CONFLITO` / `GUARDIAO_DUPLICADO` (409) e `ERRO_INTERNO` (500, sem expor stack trace).
 
-## Demonstração e vídeo pitch
+## Vídeo pitch
 
-Por conflito de horários de trabalho e fechamento das outras entregas na reta final, não conseguimos gravar o vídeo pitch separado de 5 minutos desta disciplina. Deixamos:
+Não conseguimos gravar o vídeo pitch separado de 5 minutos a tempo da entrega por choque de horários do grupo na reta final. Para a avaliação prática da API, deixamos tudo rodando e pronto para teste:
 
-- **Demonstração da API Java funcionando integrada ao app Mobile:** https://youtu.be/lqc-IkzOcis (mostra cadastro, login JWT, conferência de mensagem, explicação com áudio, feedback, histórico, exclusão e consentimento LGPD rodando contra a API Java publicada na Azure).
-- **Roteiro do pitch para a apresentação presencial:** [docs/roteiro-pitch.md](docs/roteiro-pitch.md).
-- **Swagger online pronto para teste:** https://confere-java-rm564969.azurewebsites.net/swagger-ui.html
+- **Swagger na Azure:** https://confere-java-rm564969.azurewebsites.net/swagger-ui.html
+- **Vídeo do app Mobile consumindo esta API ponta a ponta:** https://youtu.be/lqc-IkzOcis (cadastro, login JWT, verificação de mensagem, explicação acessível com áudio, feedback, histórico, exclusão e consentimento LGPD rodando direto na API Java publicada na Azure).
+- **Testes automatizados:** 19 testes JUnit 5/MockMvc no CI e script `scripts/testar-api.ps1` (55 validações HTTP passando contra a API na Azure).
 
 ## Uso de IA generativa
 
-Usamos Gemini e Claude como apoio no desenvolvimento: estruturação inicial das camadas Spring Boot, apoio na configuração do Spring AI e do RabbitMQ, revisão do tratamento global de erros, escrita de testes automatizados e revisão do README. Todo o código, o mapeamento das 11 tabelas `CF_*`, os scripts de banco e os testes foram revisados, executados e validados pelo grupo. Na própria aplicação, o Spring AI (`ChatClient`) atua no `ExplicadorAcessivelService` para gerar explicações acessíveis para idosos.
+Usamos Gemini e Claude como apoio na revisão de código, configuração do Spring AI e do RabbitMQ, escrita de testes e revisão deste README. Todo o código, as 11 tabelas `CF_*`, os scripts e os testes foram revisados e validados pelo grupo. Na aplicação, o Spring AI (`ChatClient`) atua no `ExplicadorAcessivelService` gerando explicações curtas para idosos.
