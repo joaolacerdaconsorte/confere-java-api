@@ -1,45 +1,42 @@
-===============================================================================
-FIAP — GLOBAL SOLUTION 2026/2 | CITIZENTECH — JAVA ADVANCED
-PROJETO: CONFERE ("Antes de clicar, pagar ou desistir de um direito: confere.")
-TURMA: 2TDSPW | PROFESSOR: LEONARDO REAL (lgsreal)
-===============================================================================
+FIAP - GLOBAL SOLUTION 2026/2 - CITIZENTECH
+Disciplina: Java Advanced (Prof. Leonardo Real)
+Projeto: Confere
+Turma: 2TDSPW
 
-1. INTEGRANTES DO GRUPO (2TDSPW)
--------------------------------------------------------------------------------
-- João Vitor Lacerda Consorte  — RM 565565 — Turma 2TDSPW
-- Kauan Vieira de Lima         — RM 565403 — Turma 2TDSPW
-- Murillo Fernandes Carapia    — RM 564969 — Turma 2TDSPW
-- Pedro de Matos Previtali     — RM 564184 — Turma 2TDSPW
+Integrantes (RM - Nome completo - Turma):
+565565 - João Vitor Lacerda Consorte - 2TDSPW
+565403 - Kauan Vieira de Lima - 2TDSPW
+564969 - Murillo Fernandes Carapia - 2TDSPW
+564184 - Pedro de Matos Previtali - 2TDSPW
 
-2. LINKS DA ENTREGA
--------------------------------------------------------------------------------
-- Repositório Público no GitHub (confere-java-api):
-  https://github.com/joaolacerdaconsorte/confere-java-api
-- Vídeo Pitch (até 5 minutos):
-  [INSERIR LINK DO YOUTUBE NÃO LISTADO / DRIVE PÚBLICO ANTES DO ENVIO NO PORTAL]
+Repositório público no GitHub:
+https://github.com/joaolacerdaconsorte/confere-java-api
 
-3. ARQUITETURA DISTRIBUÍDA (REQUISITO 5)
--------------------------------------------------------------------------------
-- Opção escolhida: Opção A — RabbitMQ
-  - Exchange (Topic): confere.verificacoes
-  - Filas: confere.verificacao.risco (+ .dlq) e confere.verificacao.offline (+ .dlq)
-  - Publicação: @TransactionalEventListener(phase = AFTER_COMMIT)
+API publicada na Azure (integrada ao app Mobile e à API .NET):
+Swagger UI:   https://confere-java-rm564969.azurewebsites.net/swagger-ui.html
+Health check: https://confere-java-rm564969.azurewebsites.net/actuator/health
 
-4. CREDENCIAIS DE TESTE (SEED AUTOMÁTICO)
--------------------------------------------------------------------------------
-- Cidadã (com vínculo ativo e consentimentos): cida@confere.app / Senha@123
-- Guardião (protege Maria Aparecida):          joao@confere.app / Senha@123
-- Administrador (CRUD catálogos /admin):       admin@confere.app / Senha@123
+Demonstração em vídeo (app Mobile consumindo a API Java ponta a ponta):
+https://youtu.be/lqc-IkzOcis
 
-5. COMO RODAR LOCALMENTE
--------------------------------------------------------------------------------
-Pré-requisito: Java 21 LTS
-Comando:
-  .\mvnw.cmd spring-boot:run
-Swagger UI:
-  http://localhost:8080/swagger-ui.html
-Health Check:
-  http://localhost:8080/actuator/health
-Testes Automatizados:
-  .\mvnw.cmd test
-===============================================================================
+Observação sobre o vídeo pitch:
+Por conflito de horários na reta final das entregas, não conseguimos gravar o
+vídeo pitch separado de 5 minutos. Deixamos o roteiro completo em
+docs/roteiro-pitch.md, o vídeo acima mostrando a API Java integrada ao app
+Mobile funcionando ponta a ponta, o deploy ativo na Azure, o script
+scripts/testar-api.ps1 e 19 testes automatizados passando no CI.
+
+Arquitetura distribuída (Requisito 5):
+Opção A - RabbitMQ
+- Exchange topic: confere.verificacoes
+- Filas: confere.verificacao.risco (+ .dlq) e confere.verificacao.offline (+ .dlq)
+- Publicação: @TransactionalEventListener(phase = AFTER_COMMIT)
+
+Usuários de teste (seed automático):
+- Cidadã:   cida@confere.app  / Senha@123
+- Guardião: joao@confere.app  / Senha@123
+- Admin:    admin@confere.app / Senha@123
+
+Como rodar localmente (Java 21):
+.\mvnw.cmd spring-boot:run
+.\mvnw.cmd test

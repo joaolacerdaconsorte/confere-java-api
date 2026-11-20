@@ -2,7 +2,7 @@ param(
     [string]$Location = "southafricanorth",
     [string]$ResourceGroup = "rg-confere-java",
     [string]$Plan = "plan-confere-java",
-    [string]$WebApp = "confere-java-rm565565",
+    [string]$WebApp = "confere-java-rm564969",
     [string]$Sku = "F1",
     [string]$LlmModel = "gemini-3.8-flash"
 )
